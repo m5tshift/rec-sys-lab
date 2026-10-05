@@ -1,0 +1,42 @@
+[
+  {
+    "model": "PopularityRecommender",
+    "precision@10": 0.065,
+    "recall@10": 0.0474,
+    "map@10": 0.0384,
+    "ndcg@10": 0.0799,
+    "catalog_coverage": 0.007,
+    "novelty_bits": 8.78,
+    "evaluated_users": 594
+  },
+  {
+    "model": "CooccurrenceRecommender",
+    "precision@10": 0.0684,
+    "recall@10": 0.0675,
+    "map@10": 0.0427,
+    "ndcg@10": 0.0889,
+    "catalog_coverage": 0.1288,
+    "novelty_bits": 10.19,
+    "evaluated_users": 594
+  },
+  {
+    "model": "ContentBasedRecommender",
+    "precision@10": 0.0082,
+    "recall@10": 0.0085,
+    "map@10": 0.0043,
+    "ndcg@10": 0.0109,
+    "catalog_coverage": 0.1958,
+    "novelty_bits": 14.47,
+    "evaluated_users": 594
+  },
+  {
+    "model": "CollaborativeRecommender",
+    "precision@10": 0.0811,
+    "recall@10": 0.0574,
+    "map@10": 0.0484,
+    "ndcg@10": 0.0986,
+    "catalog_coverage": 0.0515,
+    "novelty_bits": 9.35,
+    "evaluated_users": 594
+  }
+]

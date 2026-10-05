@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RecSys demo</title>
+  <style>
+    :root {
+      --bg-main: #0b0f19;
+      --bg-card: #151d30;
+      --bg-card-hover: #1c2742;
+      --bg-input: #0e1526;
+      --border: #23314f;
+      --border-focus: #3b82f6;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 0.85rem 1.5rem;
+    }
+
+    .header-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: #fff;
+      border-color: var(--border-focus);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--accent-green);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    main {
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .control-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      align-items: flex-end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .form-control {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      padding: 0.6rem 0.85rem;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--border-focus);
+    }
+
+    .presets-row {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-preset {
+      background: transparent;
+      border: 1px dashed var(--border);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-preset:hover {
+      border-color: var(--border-focus);
+      color: var(--text-main);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+      height: 42px;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      height: 42px;
+    }
+
+    .checkbox-group input {
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Meta Bar */
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      padding: 0.85rem 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .badge-strategy {
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      color: #60a5fa;
+    }
+
+    .badge-fallback {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--accent-amber);
+    }
+
+    .badge-latency {
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: var(--accent-cyan);
+    }
+
+    .badge-count {
+      background: rgba(148, 163, 184, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      color: var(--text-muted);
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1rem;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+      background: var(--bg-card-hover);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.35;
+    }
+
+    .card-year {
+      color: var(--text-muted);
+      font-weight: 400;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .card-score {
+      background: rgba(37, 99, 235, 0.2);
+      border: 1px solid rgba(37, 99, 235, 0.4);
+      color: #93c5fd;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .card-genres {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .genre-tag {
+      background: rgba(148, 163, 184, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      font-size: 0.72rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card-id {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+
+    .btn-similar {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-similar:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* Modal / Dialog */
+    dialog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      max-width: 600px;
+      width: 90%;
+      color: var(--text-main);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+    }
+
+    .dialog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dialog-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .btn-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-close:hover {
+      color: #fff;
+    }
+
+    .similar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 1rem;
+    }
+
+    .similar-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      gap: 1rem;
+    }
+
+    .similar-item-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .similar-item-genres {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-md);
+      grid-column: 1 / -1;
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 0.8s linear infinite;
+      margin: 2rem auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: var(--bg-card);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-title">RecSys demo</div>
+      </div>
+
+      <div class="nav-links">
+        <a href="/docs" target="_blank" class="nav-link">Swagger Docs</a>
+        <a href="http://localhost:9090" target="_blank" class="nav-link">Prometheus</a>
+        <a href="http://localhost:3000" target="_blank" class="nav-link">Grafana</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="control-panel">
+      <div class="panel-title">
+        <span>Параметры персонализации</span>
+        <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);">
+          Dataset: MovieLens 100k
+        </span>
+      </div>
+
+      <form id="rec-form" class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="user-id">User ID</label>
+          <input type="number" id="user-id" class="form-control" value="1" min="1" required>
+          <div class="presets-row">
+            <button type="button" class="btn-preset" data-uid="1">User 1 (Active)</button>
+            <button type="button" class="btn-preset" data-uid="42">User 42 (Regular)</button>
+            <button type="button" class="btn-preset" data-uid="999999">User 999999 (Cold)</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="model-type">Алгоритм рекомендации</label>
+          <select id="model-type" class="form-control">
+            <option value="collaborative" selected>Collaborative Filtering (SVD)</option>
+            <option value="content_based">Content-Based (TF-IDF)</option>
+            <option value="cooccurrence">Co-occurrence (Also Watched)</option>
+            <option value="popularity">Bayesian Popularity (IMDb)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="filter-genre">Фильтр по жанру</label>
+          <select id="filter-genre" class="form-control">
+            <option value="">Все жанры</option>
+            <option value="Action">Action</option>
+            <option value="Adventure">Adventure</option>
+            <option value="Animation">Animation</option>
+            <option value="Comedy">Comedy</option>
+            <option value="Crime">Crime</option>
+            <option value="Drama">Drama</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Horror">Horror</option>
+            <option value="Romance">Romance</option>
+            <option value="Sci-Fi">Sci-Fi</option>
+            <option value="Thriller">Thriller</option>
+            <option value="War">War</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="top-k">Количество (Top-K)</label>
+          <select id="top-k" class="form-control">
+            <option value="5">5 фильмов</option>
+            <option value="10" selected>10 фильмов</option>
+            <option value="15">15 фильмов</option>
+            <option value="20">20 фильмов</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-group">
+            <input type="checkbox" id="exclude-seen" checked>
+            <span>Исключить просмотренные</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-primary" id="btn-submit">
+          Получить рекомендации
+        </button>
+      </form>
+    </section>
+
+    <!-- Meta Information Bar -->
+    <section class="meta-bar" id="meta-bar" style="display: none;">
+      <span class="meta-badge badge-strategy" id="meta-strategy">Strategy: -</span>
+      <span class="meta-badge badge-latency" id="meta-latency">Latency: -</span>
+      <span class="meta-badge badge-count" id="meta-count">Count: -</span>
+      <span class="meta-badge" id="meta-user">User: -</span>
+    </section>
+
+    <!-- Results Section -->
+    <section>
+      <div id="loading" class="spinner" style="display: none;"></div>
+      <div id="results-grid" class="cards-grid">
+        <div class="empty-state">
+          Нажмите кнопку «Получить рекомендации» для генерации персонализированного списка.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Similar Items Dialog -->
+  <dialog id="similar-dialog">
+    <div class="dialog-header">
+      <div>
+        <div class="dialog-title" id="dialog-movie-title">Похожие фильмы</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);" id="dialog-movie-meta">Item-to-Item Similarity</div>
+      </div>
+      <button class="btn-close" id="btn-close-dialog">&times;</button>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem;">
+      <label style="font-size: 0.8rem; color: var(--text-muted);">Модель подобия:</label>
+      <select id="dialog-model-type" class="form-control" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; width: auto;">
+        <option value="content_based" selected>Content-Based (TF-IDF)</option>
+        <option value="collaborative">Collaborative (SVD Latent)</option>
+        <option value="cooccurrence">Co-occurrence (Also Watched)</option>
+      </select>
+    </div>
+
+    <div id="dialog-loading" class="spinner" style="display: none;"></div>
+    <div class="similar-list" id="dialog-similar-list"></div>
+  </dialog>
+
+  <footer>
+    Multi-model RecSys Architecture: SVD Matrix Factorization, Content-Based TF-IDF, Co-occurrence Heuristics, Bayesian Popularity Baseline.
+  </footer>
+
+  <script>
+    const form = document.getElementById("rec-form");
+    const userIdInput = document.getElementById("user-id");
+    const modelSelect = document.getElementById("model-type");
+    const genreSelect = document.getElementById("filter-genre");
+    const topKSelect = document.getElementById("top-k");
+    const excludeSeenCheck = document.getElementById("exclude-seen");
+    const resultsGrid = document.getElementById("results-grid");
+    const loadingSpinner = document.getElementById("loading");
+    const metaBar = document.getElementById("meta-bar");
+    const metaStrategy = document.getElementById("meta-strategy");
+    const metaLatency = document.getElementById("meta-latency");
+    const metaCount = document.getElementById("meta-count");
+    const metaUser = document.getElementById("meta-user");
+
+    const dialog = document.getElementById("similar-dialog");
+    const dialogCloseBtn = document.getElementById("btn-close-dialog");
+    const dialogTitle = document.getElementById("dialog-movie-title");
+    const dialogMeta = document.getElementById("dialog-movie-meta");
+    const dialogList = document.getElementById("dialog-similar-list");
+    const dialogLoading = document.getElementById("dialog-loading");
+    const dialogModelSelect = document.getElementById("dialog-model-type");
+
+    let currentSelectedItemId = null;
+
+    // Presets
+    document.querySelectorAll(".btn-preset").forEach(btn => {
+      btn.addEventListener("click", () => {
+        userIdInput.value = btn.dataset.uid;
+        loadRecommendations();
+      });
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      loadRecommendations();
+    });
+
+    dialogCloseBtn.addEventListener("click", () => {
+      dialog.close();
+    });
+
+    dialog.addEventListener("click", (e) => {
+      const rect = dialog.getBoundingClientRect();
+      const inDialog = (
+        rect.top <= e.clientY &&
+        e.clientY <= rect.top + rect.height &&
+        rect.left <= e.clientX &&
+        e.clientX <= rect.left + rect.width
+      );
+      if (!inDialog) {
+        dialog.close();
+      }
+    });
+
+    dialogModelSelect.addEventListener("change", () => {
+      if (currentSelectedItemId) {
+        loadSimilarItems(currentSelectedItemId, dialogTitle.innerText);
+      }
+    });
+
+    async function loadRecommendations() {
+      const userId = userIdInput.value;
+      const model = modelSelect.value;
+      const genre = genreSelect.value;
+      const topK = topKSelect.value;
+      const excludeSeen = excludeSeenCheck.checked;
+
+      loadingSpinner.style.display = "block";
+      resultsGrid.innerHTML = "";
+      metaBar.style.display = "none";
+
+      const params = new URLSearchParams({
+        model_type: model,
+        top_k: topK,
+        exclude_seen: excludeSeen,
+      });
+      if (genre) {
+        params.append("filter_genre", genre);
+      }
+
+      try {
+        const response = await fetch(`/recommend/user/${userId}?${params.toString()}`);
+        if (!response.ok) {
+          throw new Error(`Ошибка сервера: ${response.status}`);
+        }
+        const data = await response.json();
+        renderResults(data);
+      } catch (err) {
+        resultsGrid.innerHTML = `
+          <div class="empty-state" style="color: var(--accent-red);">
+            Ошибка при получении рекомендаций: ${err.message}
+          </div>
+        `;
+      } finally {
+        loadingSpinner.style.display = "none";
+      }
+    }
+
+    function renderResults(data) {
+      metaBar.style.display = "flex";
+      metaLatency.innerText = `Latency: ${data.latency_ms} ms`;
+      metaCount.innerText = `Items: ${data.count}`;
+      metaUser.innerText = `User ID: ${data.user_id}`;
+
+      if (data.is_fallback) {
+        metaStrategy.className = "meta-badge badge-fallback";
+        metaStrategy.innerText = `Fallback: ${data.strategy_used}`;
+      } else {
+        metaStrategy.className = "meta-badge badge-strategy";
+        metaStrategy.innerText = `Strategy: ${data.strategy_used}`;
+      }
+
+      if (!data.recommendations || data.recommendations.length === 0) {
+        resultsGrid.innerHTML = `
+          <div class="empty-state">
+            По заданным критериям рекомендаций не найдено. Попробуйте снять фильтр по жанру.
+          </div>
+        `;
+        return;
+      }
+
+      resultsGrid.innerHTML = data.recommendations.map(item => {
+        const genresList = item.genres ? item.genres.split("|") : [];
+        const genresBadges = genresList
+          .map(g => `<span class="genre-tag">${escapeHtml(g)}</span>`)
+          .join("");
+
+        return `
+          <div class="card">
+            <div>
+              <div class="card-header">
+                <div>
+                  <div class="card-title">${escapeHtml(item.title)}</div>
+                  ${item.year ? `<div class="card-year">${item.year}</div>` : ""}
+                </div>
+                <div class="card-score">${item.score}</div>
+              </div>
+
+              <div class="card-genres" style="margin-top: 0.75rem;">
+                ${genresBadges}
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <span class="card-id">ID: #${item.item_id}</span>
+              <button class="btn-similar" onclick="openSimilarDialog(${item.item_id}, '${escapeHtml(item.title)}')">
+                Похожие фильмы
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    window.openSimilarDialog = function(itemId, title) {
+      currentSelectedItemId = itemId;
+      dialogTitle.innerText = title;
+      dialogMeta.innerText = `Item-to-Item подобие для Movie ID #${itemId}`;
+      dialog.showModal();
+      loadSimilarItems(itemId, title);
+    };
+
+    async function loadSimilarItems(itemId, title) {
+      dialogLoading.style.display = "block";
+      dialogList.innerHTML = "";
+      const model = dialogModelSelect.value;
+
+      try {
+        const response = await fetch(`/recommend/item/${itemId}?model_type=${model}&top_k=5`);
+        if (!response.ok) {
+          throw new Error(`Ошибка: ${response.status}`);
+        }
+        const data = await response.json();
+
+        if (!data.similar_items || data.similar_items.length === 0) {
+          dialogList.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 1rem;">Похожих фильмов не найдено</div>`;
+          return;
+        }
+
+        dialogList.innerHTML = data.similar_items.map(sim => `
+          <div class="similar-item">
+            <div>
+              <div class="similar-item-title">${escapeHtml(formatMovieTitle(sim.title, sim.year))}</div>
+              <div class="similar-item-genres">${escapeHtml(sim.genres || "")}</div>
+            </div>
+            <div class="card-score">${sim.score}</div>
+          </div>
+        `).join("");
+      } catch (err) {
+        dialogList.innerHTML = `<div style="color: var(--accent-red); padding: 1rem;">${err.message}</div>`;
+      } finally {
+        dialogLoading.style.display = "none";
+      }
+    }
+
+    function formatMovieTitle(title, year) {
+      if (!title) return "";
+      if (year && !title.includes(`(${year})`)) {
+        return `${title} (${year})`;
+      }
+      return title;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Auto-load on initial page visit
+    loadRecommendations();
+  </script>
+</body>
+</html>
