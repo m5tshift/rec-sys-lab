@@ -61,7 +61,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="RecSys Personalization API",
-    description="Production-grade recommendation service with multi-model fallback and Prometheus monitoring.",
+    description="Educational recommendation demo with model comparison, fallback and Prometheus metrics.",
     version="1.0.0",
     lifespan=lifespan,
 )

@@ -10,13 +10,13 @@ from src.models.popularity import PopularityRecommender
 
 
 class HybridFallbackPipeline:
-    """Production-grade pipeline executing personalized models with hierarchical fallback.
+    """Demo pipeline combining personalized recommendations with fallback models.
 
     Hierarchy:
         1. Primary Model (Collaborative Filtering or Content-Based)
         2. Co-occurrence fallback (if user has sparse positive history)
         3. Genre Popularity fallback (if user has preference or filter)
-        4. Global Bayesian Popularity fallback (guarantees SLA and prevents zero-result screens)
+        4. Global Bayesian Popularity fallback for users with insufficient history
     """
 
     def __init__(

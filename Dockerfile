@@ -25,8 +25,6 @@ ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
 
 COPY src/ ./src/
-COPY data/ ./data/
-COPY artifacts/ ./artifacts/
 
 EXPOSE 8000
 
